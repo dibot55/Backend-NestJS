@@ -4,6 +4,8 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Query,
+  DefaultValuePipe,
 } from '@nestjs/common'; // Decoradores
 import { AppService } from './app.service';
 
@@ -48,5 +50,43 @@ export class AppController {
     id: number,
   ) {
     return `this is the ${id}`;
+  }
+
+  // Query en Nest any
+  @Get('productz')
+  getProductzQuery(@Query() params: any) {
+    const { limit, offset } = params;
+    return `products: limite => ${limit} offset => ${offset}`;
+  }
+
+  // Query mas especifica con valores por defecto
+  @Get('products')
+  getProductsQuery(
+    @Query('limit') limit = 100,
+    @Query('offset') offset = 0,
+    @Query('brand') brand: string,
+  ) {
+    return `products: limite => ${limit} offset => ${offset} brand => ${brand}`;
+  }
+
+  // Querys con valores por defecto usando pipes
+  @Get('products')
+  getProducts(
+    @Query('limit', new DefaultValuePipe(100)) limit: number,
+    @Query('offset', new DefaultValuePipe(0)) offset: number,
+    @Query('brand') brand: string,
+  ) {
+    return `products: limite => ${limit} offset => ${offset} brand => ${brand}`;
+  }
+
+  // Choque de rutas
+  @Get('name/crokiezi') // Recibe una ruta
+  getNames() {
+    return `this is my kindom -----`;
+  }
+
+  @Get('name/:id') // Recibe un parametro
+  getName(@Param('id') id: number) {
+    return `this is my kindom ${id}`;
   }
 }
